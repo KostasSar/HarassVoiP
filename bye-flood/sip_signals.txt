@@ -1,0 +1,58 @@
+	INVITE sip:300@192.168.1.9 SIP/2.0
+	Via: SIP/2.0/UDP 192.168.1.12:5060;rport;branch=z9hG4bK438790620
+	From: <sip:301@192.168.1.9>;tag=1023048753
+	To: <sip:300@192.168.1.9>
+	Call-ID: 384984089
+	CSeq: 20 INVITE
+	Contact: <sip:301@192.168.1.12>
+	Content-Type: application/sdp
+	Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY, MESSAGE, SUBSCRIBE, INFO
+	Max-Forwards: 70
+	User-Agent: Linphone/3.6.1 (eXosip2/4.1.0)
+	Subject: Phone call
+	Content-Length:   325
+
+	BYE sip:300@192.168.1.9:5060 SIP/2.0
+	Via: SIP/2.0/UDP 192.168.1.12:5060;rport;branch=z9hG4bK942621718
+	From: <sip:301@192.168.1.9>;tag=1023048753
+	To: <sip:300@192.168.1.9>;tag=as35f92d74
+	Call-ID: 384984089
+	CSeq: 22 BYE
+	Contact: <sip:301@192.168.1.12:5060>
+	Authorization: Digest username="301", realm="asterisk", nonce="5f084f24", uri="sip:300@192.168.1.9:5060", response="f0c94b6eb4d70ff1c378fa19cce9ad43", algorithm=MD5
+	Max-Forwards: 70
+	User-Agent: Linphone/3.6.1 (eXosip2/4.1.0)
+	Content-Length: 0
+
+
+
+	SIP/2.0 180 Ringing
+	Via: SIP/2.0/UDP 192.168.1.5:5060;branch=z9hG4bK226016822;received=192.168.1.5;rport=5060
+	From: <sip:301@192.168.1.2>;tag=2032604445
+	To: <sip:300@192.168.1.2>;tag=as1b0290be
+	Call-ID: 338695025
+	CSeq: 21 INVITE
+	Server: Asterisk PBX 16.10.0
+	Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY, INFO, PUBLISH, MESSAGE
+	Supported: replaces, timer
+	Contact: <sip:300@192.168.1.2:5060>
+	Content-Length: 0
+
+
+	SIP/2.0 486 Busy Here
+	Via: SIP/2.0/UDP 192.168.1.5:5060;branch=z9hG4bK226016822;received=192.168.1.5;rport=5060
+	From: <sip:301@192.168.1.2>;tag=2032604445
+	To: <sip:300@192.168.1.2>;tag=as1b0290be
+	Call-ID: 338695025
+	CSeq: 21 INVITE
+	Server: Asterisk PBX 16.10.0
+	Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY, INFO, PUBLISH, MESSAGE
+	Supported: replaces, timer
+	X-Asterisk-HangupCause: Call Rejected
+	X-Asterisk-HangupCauseCode: 21
+	Content-Length: 0
+
+	
+
+
+
