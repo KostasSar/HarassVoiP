@@ -1,13 +1,16 @@
 from scapy.all import *
+# import sip
 
-BUSY_1 = 'SIP/2.0 486 Busy Here'
-BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected'
-BUSY_3 = 'X-Asterisk-HangupCauseCode: 21'
 
 ringing = ''
 
 def pkt_callback(pkt):
-    pkt.show() # debug statement
+    BUSY_1 = 'SIP/2.0 486 Busy Here'
+    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected'
+    BUSY_3 = 'X-Asterisk-HangupCauseCode: 21'
 
-sniff(iface="wlp7s0", prn=pkt_callback, filter="udp", store=0, )
+    ringing = pkt # debug statement
+    print(ringing.summary())
+
+sniff(iface="wlp7s0", prn=pkt_callback, filter="udp and port 5060", store=0)
 
