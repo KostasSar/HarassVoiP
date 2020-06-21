@@ -4,15 +4,17 @@ import argparse
 from scapy.all import sniff
 import scapy.fields
 import re
+import codecs
 
 
 def traffic_parser(packet):
-    payload=packet[3]
+    payload=packet[3].command()
     print(payload)
     print(type(payload))
-    # header=re.match("Raw\(load\=(.*)\ssip", payload)
-    # print(header)
-
+    header=re.match("Raw\(load\=b\'(.*)\ssip", payload)
+    print(type(header))
+    if header:
+    	print(header.groups())
 
 
 parser = argparse.ArgumentParser(description="rtp replay script. Arguments: -i <interface> -f <sniff filter> -o <sniff outputfile> Interface defaults to 'eth0' and filter defaults to 'udp and port 5060'")
