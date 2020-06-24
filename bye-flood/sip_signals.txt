@@ -52,7 +52,13 @@
 	X-Asterisk-HangupCauseCode: 21
 	Content-Length: 0
 
-	
 
-
+	SIP/2.0 603 Decline
+	Via: SIP/2.0/UDP 192.168.1.24:5060;branch=z9hG4bK2809273b
+	From: <sip:300@192.168.1.24>;tag=as78946734
+	To: <sip:301@192.168.1.25;line=00dd11079d432ef>;tag=1903848464
+	Call-ID: 76d8cd700796ed993bff3628657dc1b9@192.168.1.24:5060
+	CSeq: 102 INVITE
+	User-Agent: Linphone/3.6.1 (eXosip2/4.1.0)
+	Content-Length: 0
 
