@@ -1,6 +1,0 @@
-{
-    "python.linting.pycodestyleEnabled": false,
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true,
-    "python.pythonPath": "byespam_venv/bin/python3.6"
-}
