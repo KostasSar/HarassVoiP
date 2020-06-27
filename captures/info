@@ -1,0 +1,1 @@
+tshark -w asterisk_capture.pcapng -f "port 5060 or portrange 10000-20000" -i eth0
