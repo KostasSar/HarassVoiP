@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
-from scapy.all import sniff, Ether, IP, UDP, send
+from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP,RTP
 import scapy.fields
 import re
 import codecs
@@ -60,7 +60,6 @@ def UDP_layer(attributes):
 
 
 
-
 parser = argparse.ArgumentParser(description="rtp replay script. Arguments: -i <interface> -f <sniff filter> -o <sniff outputfile> Interface defaults to 'eth0' and filter defaults to 'udp and port 5060'")
 parser.add_argument('-i', "--interface", default="eth0", help="interface to use for sniffing")
 parser.add_argument('-f', '--filter', default="udp and (port 5060 or portrange 15000-15010)", help="filter to be used in scapy")
@@ -71,5 +70,44 @@ if __name__ == '__main__':
     print("capturing from: "+args.interface)
     print("capture filter is: '"+args.filter+"'\n---------------------")
     
-    sniff(iface=args.interface, filter=args.filter, prn=traffic_parser)
+    # sniff(iface=args.interface, filter=args.filter, prn=traffic_parser)
  
+    eth_attributes={}
+    eth_attributes["dst"]="04:b1:67:05:25:f1"
+    eth_attributes["src"]="70:85:c2:dd:7a:91"
+    eth_attributes["type"]=2048
+
+    eth=Ether_layer(eth_attributes)
+
+    ip_attributes={}
+    ip_attributes['version']=4
+    ip_attributes['ihl']=5
+    ip_attributes['tos']=0
+    ip_attributes['len']=200
+    ip_attributes['id']=46866
+    ip_attributes['flags']=2
+    ip_attributes['frag']=0
+    ip_attributes['ttl']=64
+    ip_attributes['proto']=17
+    ip_attributes['src']="192.168.1.2"
+    ip_attributes['dst']="192.168.1.16"
+
+    ip=IP_layer(ip_attributes)
+
+    udp_attributes={}
+    udp_attributes['sport']=8080
+    udp_attributes['dport']=8081
+    udp_attributes['len']=180
+
+    udp=UDP_layer(udp_attributes)
+
+    # sendp(eth/ip/udp/ICMP("HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567"))
+    sendp(eth/ip/udp/RTP("HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567HELLO MFCKERS1234567"))
+
+
+
+    Ethernet II, Src: ASRockIn_dd:7a:91 (70:85:c2:dd:7a:91), Dst: XiaomiCo_05:25:f1 (04:b1:67:05:25:f1)
+
+
+
+sendp(eth/ip/udp/ICMP("HELLO MFCKERS1234567HELLOHELLO MFCKERS1234567HELLOHELLO MFCKERS1234567HELLOHELLO MFCKERS1234567HELLO"))
