@@ -106,8 +106,4 @@ if __name__ == '__main__':
 
 
 
-    Ethernet II, Src: ASRockIn_dd:7a:91 (70:85:c2:dd:7a:91), Dst: XiaomiCo_05:25:f1 (04:b1:67:05:25:f1)
-
-
-
 sendp(eth/ip/udp/ICMP("HELLO MFCKERS1234567HELLOHELLO MFCKERS1234567HELLOHELLO MFCKERS1234567HELLOHELLO MFCKERS1234567HELLO"))
