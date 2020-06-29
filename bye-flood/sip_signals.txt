@@ -62,3 +62,10 @@
 	User-Agent: Linphone/3.6.1 (eXosip2/4.1.0)
 	Content-Length: 0
 
+
+
+
+
+Ether(dst='c4:54:44:a1:ee:5b', src='b8:27:eb:65:0c:c5', type=2048)/IP(version=4, ihl=5, tos=0, len=476, id=51234, flags=0, frag=0, ttl=64, proto=17, chksum=11629, src='192.168.1.24', dst='192.168.1.25')/UDP(sport=5060, dport=5060, len=456, chksum=46815)/Raw(load=b'SIP/2.0 180 Ringing\r\nVia: SIP/2.0/UDP 192.168.1.25:5060;branch=z9hG4bK986448146;received=192.168.1.25;rport=5060\r\nFrom: <sip:301@192.168.1.24>;tag=1389214970\r\nTo: <sip:300@192.168.1.24>;tag=as0c714f40\r\nCall-ID: 862359887\r\nCSeq: 21 INVITE\r\nServer: Asterisk PBX 16.10.0\r\nAllow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY, INFO, PUBLISH, MESSAGE\r\nSupported: replaces, timer\r\nContact: <sip:300@192.168.1.24:5060>\r\nContent-Length: 0\r\n\r\n')
+
+Ether(dst='c4:54:44:a1:ee:5b', src='b8:27:eb:65:0c:c5', type=2048)/IP(version=4, ihl=5, tos=0, len=511, id=52492, flags=0, frag=0, ttl=64, proto=17, chksum=10336, src='192.168.1.24', dst='192.168.1.25')/UDP(sport=5060, dport=5060, len=491, chksum=4612)/Raw(load=b'SIP/2.0 486 Busy Here\r\nVia: SIP/2.0/UDP 192.168.1.25:5060;branch=z9hG4bK986448146;received=192.168.1.25;rport=5060\r\nFrom: <sip:301@192.168.1.24>;tag=1389214970\r\nTo: <sip:300@192.168.1.24>;tag=as0c714f40\r\nCall-ID: 862359887\r\nCSeq: 21 INVITE\r\nServer: Asterisk PBX 16.10.0\r\nAllow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY, INFO, PUBLISH, MESSAGE\r\nSupported: replaces, timer\r\nX-Asterisk-HangupCause: Call Rejected\r\nX-Asterisk-HangupCauseCode: 21\r\nContent-Length: 0\r\n\r\n')

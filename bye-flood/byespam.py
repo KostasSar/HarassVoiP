@@ -1,23 +1,65 @@
-from scapy.all import sniff
+from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP
 import scapy.fields
 import re
 import codecs
 import argparse
 
-def pkt_callback(pkt):
+def traffic_parser(packet):
     BUSY_1 = 'SIP/2.0 486 Busy Here'
-    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected'
-    BUSY_3 = 'X-Asterisk-HangupCauseCode: 21'
+    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected\\r\X-Asterisk-HangupCauseCode: 21'
 
-    payload = pkt[3].command()
+    payload = packet[3].command()
 
-    print(payload)
+
 
     header=re.findall("Ringing", payload)
     if header:
-        print(header)
+
+        print(payload)
+
         # Implement packet modification
+        payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
+        payload = re.sub("Contact:(.*)>", BUSY_2, payload,1)
+
+        print(payload)
+
+
     print("\n")
+
+def Ether_layer(attributes):
+    layer2=Ether()
+    layer2.dst=attributes['dst']
+    layer2.src=attributes['src']
+    layer2.type=attributes['type']
+
+    return layer2
+
+
+def IP_layer(attributes):
+    layer3=IP()
+    layer3.version=attributes['version']
+    layer3.ihl=attributes['ihl']
+    layer3.tos=attributes['tos']
+    layer3.len=attributes['len']
+    layer3.id=attributes['id']
+    layer3.flags=attributes['flags']
+    layer3.frag=attributes['frag']
+    layer3.ttl=attributes['ttl']
+    layer3.proto=attributes['proto']
+    layer3.src=attributes['src']
+    layer3.dst=attributes['dst']
+
+    return layer3
+
+
+def UDP_layer(attributes):
+    layer4=UDP()
+    layer4.sport=attributes['sport']
+    layer4.dport=attributes['dport']
+    layer4.len=attributes['len']
+
+    return layer4
+
 
 parser = argparse.ArgumentParser(description="rtp replay script. Arguments: -i <interface> -f <sniff filter> -o <sniff outputfile> Interface defaults to 'eth0' and filter defaults to 'udp and port 5060'")
 parser.add_argument('-i', "--interface", default="eth0", help="interface to use for sniffing")
@@ -26,5 +68,5 @@ parser.add_argument('-o', "--outfile", help="output file (optional)")
 args=parser.parse_args()
 
 if __name__ == '__main__':
-    sniff(iface=args.interface, prn=pkt_callback, filter="udp and port 5060", store=0)
+    sniff(iface=args.interface, prn=traffic_parser, filter="udp and port 5060", store=0)
 
