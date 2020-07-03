@@ -8,19 +8,19 @@ import codecs
 
 
 def traffic_parser(packet):
-    whole_packet=packet.command()
-    print(whole_packet)
-    print(type(whole_packet))
+    whole_packet=packet[0]#.command()
+    print(whole_packet.dst)
+    # print(type(whole_packet))
 
-    payload=packet[3].command()
-    # print(payload)
-    # print(type(payload))
-    header=re.match("Raw\(load\=b\'(.*)\ssip", payload)
-    # print(type(header))
-    if header:
-    	print(header.groups())
+    # payload=packet[3].command()
+    # # print(payload)
+    # # print(type(payload))
+    # header=re.match("Raw\(load\=b\'(.*)\ssip", payload)
+    # # print(type(header))
+    # if header:
+    # 	print(header.groups())
 
-    header=re.match("Raw\(load\=b\'(.*)\ssip", payload)
+    # header=re.match("Raw\(load\=b\'(.*)\ssip", payload)
 
 
 def Ether_layer(attributes):
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     print("capturing from: "+args.interface)
     print("capture filter is: '"+args.filter+"'\n---------------------")
     
-    # sniff(iface=args.interface, filter=args.filter, prn=traffic_parser)
+    sniff(iface=args.interface, filter=args.filter, prn=traffic_parser)
  
     eth_attributes={}
     eth_attributes["dst"]="04:b1:67:05:25:f1"
