@@ -1,4 +1,8 @@
-from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP, rdpcap,Raw
+#!/usr/bin/python3
+
+# -*- coding: utf-8 -*-
+
+from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP, rdpcap, Raw
 import scapy.fields
 import re
 import codecs
@@ -6,15 +10,15 @@ import argparse
 
 def traffic_parser(packet):
     BUSY_1 = 'SIP/2.0 486 Busy Here'
-    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected\\\\r\\\\nX-Asterisk-HangupCauseCode: 21'
+    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected\r\nX-Asterisk-HangupCauseCode: 21'
 
-    payload = packet[3].command()
-    # payload = packet[3]
+    payload = packet[UDP].payload.load
 
-    # print(payload_comm)
-    print(bytes(payload))
+    print(type(payload))
+    print(payload.decode("utf-8"))
+    payload = payload.decode("utf-8")
 
-    header=re.findall("Ringing", payload)
+    header=re.findall("Ringing", str(payload))
     if header:
         
         eth_attributes={}
@@ -40,29 +44,31 @@ def traffic_parser(packet):
         payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
         payload = payload.replace("Raw(load=b\'", '', 1)
         payload = re.sub("\'\)$", '', payload, 1)
-        # payload = payload.replace("\\\\", "\\")
+        # print(payload.replace('\\\\', '\\'))
+        payload = payload.replace("\\\\", "\\")
 
-        for incr in range(1,5):
-            ip_attributes={}
-            ip_attributes['version']=packet[1].version
-            ip_attributes['tos']=packet[1].tos
-            ip_attributes['len']=464 #packet[1].len
-            # ip_attributes['id']=packet[1].id+incr
-            ip_attributes['id']=0
-            ip_attributes['flags']=packet[1].flags
-            ip_attributes['frag']=packet[1].frag
-            ip_attributes['ttl']=packet[1].ttl
-            ip_attributes['proto']=packet[1].proto
-            ip_attributes['src']=packet[1].src
-            ip_attributes['dst']=packet[1].dst
+        # for incr in range(1,5):
+        ip_attributes={}
+        ip_attributes['version']=packet[1].version
+        ip_attributes['tos']=packet[1].tos
+        ip_attributes['len']=464 #packet[1].len
+        # ip_attributes['id']=packet[1].id+incr
+        ip_attributes['id']=0
+        ip_attributes['flags']=packet[1].flags
+        ip_attributes['frag']=packet[1].frag
+        ip_attributes['ttl']=packet[1].ttl
+        ip_attributes['proto']=packet[1].proto
+        ip_attributes['src']=packet[1].src
+        ip_attributes['dst']=packet[1].dst
 
-            ip = IP_layer(ip_attributes)
+        ip = IP_layer(ip_attributes)
 
-            sendp(eth/ip/udp/Raw(load=payload))
+        sendp(eth/ip/udp/Raw(load=payload))
 
-            print(payload)
-            print(Raw(load=payload))
-            print("\n")
+        print(type(payload))
+        print(payload)
+        # print(Raw(load=payload))
+        print("\n")
 
 def Ether_layer(attributes):
     layer2=Ether()
