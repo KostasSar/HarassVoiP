@@ -11,8 +11,8 @@ def traffic_parser(packet):
     payload = packet[UDP].payload.load
 
     print(payload)
-    print(payload.decode("utf-8-sig"))
-    payload = payload.decode("utf-8-sig")
+    # print(payload.decode("utf-8-sig"))
+    payload = payload.decode("utf-8")
 
     print("----------------------------------------------------------------------")
 
@@ -47,7 +47,7 @@ def traffic_parser(packet):
         # print(payload.replace('\\\\', '\\'))
         # payload = payload.replace("\\\\", "\\")
         payload = payload + "\r\n"
-
+        print(payload.encode("ascii","ignore"))
 
         for incr in range(1,5):
 
@@ -69,7 +69,7 @@ def traffic_parser(packet):
 
             sendp(eth/ip/udp/Raw(load=payload))
 
-            print(payload)
+            # print(payload)
             # print(Raw(load=payload))
 
 def Ether_layer(attributes):
