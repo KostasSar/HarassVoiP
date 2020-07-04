@@ -21,16 +21,16 @@ def traffic_parser(packet):
     if header:
         
         eth_attributes={}
-        eth_attributes['dst']=packet[0].dst
-        eth_attributes['src']=packet[0].src
-        eth_attributes['type']=packet[0].type
+        eth_attributes['dst']=packet[Ether].dst
+        eth_attributes['src']=packet[Ether].src
+        eth_attributes['type']=packet[Ether].type
         
         eth = Ether_layer(eth_attributes)
 
 
         udp_attributes={}
-        udp_attributes['sport']=packet[2].sport
-        udp_attributes['dport']=packet[2].dport
+        udp_attributes['sport']=packet[UDP].sport
+        udp_attributes['dport']=packet[UDP].dport
         # udp_attributes['len']=444
         udp_attributes['len']=491
     
@@ -46,23 +46,23 @@ def traffic_parser(packet):
         # payload = re.sub("\'\)$", '', payload, 1)
         # print(payload.replace('\\\\', '\\'))
         # payload = payload.replace("\\\\", "\\")
-        payload = payload + "\r\n"
+        payload = payload + '\r\n'
         print(payload.encode("ascii","ignore"))
 
         for incr in range(1,5):
 
             ip_attributes={}
-            ip_attributes['version']=packet[1].version
-            ip_attributes['tos']=packet[1].tos
-            ip_attributes['len']=511 #packet[1].len
-            ip_attributes['id']=packet[1].id+incr
+            ip_attributes['version']=packet[IP].version
+            ip_attributes['tos']=packet[IP].tos
+            ip_attributes['len']=511 #packet[IP].len
+            ip_attributes['id']=packet[IP].id+incr
             # ip_attributes['id']=0
-            ip_attributes['flags']=packet[1].flags
-            ip_attributes['frag']=packet[1].frag
-            ip_attributes['ttl']=packet[1].ttl
-            ip_attributes['proto']=packet[1].proto
-            ip_attributes['src']=packet[1].src
-            ip_attributes['dst']=packet[1].dst
+            ip_attributes['flags']=packet[IP].flags
+            ip_attributes['frag']=packet[IP].frag
+            ip_attributes['ttl']=packet[IP].ttl
+            ip_attributes['proto']=packet[IP].proto
+            ip_attributes['src']=packet[IP].src
+            ip_attributes['dst']=packet[IP].dst
 
             ip = IP_layer(ip_attributes)
             
