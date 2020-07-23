@@ -1,0 +1,13 @@
+REGISTER sip:%(dest_ip)s;transport=UDP SIP/2.0
+Via: SIP/2.0/UDP %(source_ip)s:%(source_port)s;branch=z9hG4bK-524287-1---ce6a8e37cd2a5823;rport
+From: <sip:305@%(dest_ip)s;transport=UDP>;tag=as2e95fa
+To: <sip:%(user)s@%(dest_ip)s;transport=UDP>
+Contact: <sip:305@%(source_ip)s:%(source_port)s:;rinstance=e577f09192abd4ea;transport=UDP>
+Call-ID: %(callid)s
+CSeq: %(seq)d REGISTER
+Max-Forwards: 70
+User-Agent: Z 5.4.5 rv2.10.9.0
+Expires: 60
+Content-Length: 0
+Allow: INVITE, ACK, CANCEL, BYE, NOTIFY, REFER, MESSAGE, OPTIONS, INFO, SUBSCRIBE
+Allow-Events: presence, kpml, talk
